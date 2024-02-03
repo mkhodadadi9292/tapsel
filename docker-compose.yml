@@ -1,0 +1,17 @@
+version: '3.8'
+services:
+  mongodb:
+    image: mongodb/mongodb-community-server
+    ports:
+      - '27017:27017'
+    volumes:
+      - dbdata:/data/db
+
+  data-importer:
+    build:
+      context: .
+      dockerfile: Dockerfile.seed_data
+    depends_on:
+      - mongodb
+volumes:
+  dbdata:
