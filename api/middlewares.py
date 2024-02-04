@@ -11,12 +11,6 @@ client = MongoClient(mongo_uri)
 db = client[database_name]
 collection = db[collection_name]
 
-#
-# @app.middleware("http")
-# async def add_start_time_header(request: Request, call_next):
-#     request.state.start_time = time.time()
-#     response = await call_next(request)
-#     return response
 
 
 @app.middleware("http")
