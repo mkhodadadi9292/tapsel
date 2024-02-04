@@ -1,38 +1,41 @@
 from typing import List
-from fastapi import HTTPException, Query
+from fastapi import HTTPException, Query, Depends
 from pymongo import MongoClient
 from cachetools import TTLCache
 from schema import AdData, StatModel
-from setting import mongo_uri, database_name, collection_name
-from middlewares import app, collection as _collection
-
-client = MongoClient(mongo_uri)
-db = client[database_name]
-collection = db[collection_name]
+from dependencies import get_mongo_db
+from setting import CTR_collection, stats_collection
+from middlewares import app
 
 cache = TTLCache(maxsize=100, ttl=60)
 
 
 @app.get("/predict", summary="Get all related CRVs.", response_model=List[AdData])
-async def predict(ids: list[int] = Query(..., title="List of primary keys")):
+async def predict(ids: list[int] = Query(..., title="List of primary keys"),
+                  db: MongoClient = Depends(get_mongo_db)):
+    """
+    Get all related CRVs
+    :param ids: adIds
+    :return: list of related CRVs data.
+    """
     cache_key = f"predict_result_{hash(tuple(ids))}"
     cached_result = cache.get(cache_key)
 
     if cached_result:
         return cached_result
 
-    query_result = collection.find({"adId": {"$in": ids}})
+    query_result = db[CTR_collection].find({"adId": {"$in": ids}})
     result = [AdData(**item) for item in query_result]
     cache[cache_key] = result
     return result
 
 
 @app.get("/stats", response_model=StatModel)
-async def get_stats():
+async def get_stats(db: MongoClient = Depends(get_mongo_db)):
     """
     Retrieve general statistics from the MongoDB collection.
+    :return: general statistics
     """
-
     pipeline = [
         {
             "$group": {
@@ -43,6 +46,5 @@ async def get_stats():
         }
     ]
 
-    stats = list(_collection.aggregate(pipeline))[0]
-
+    stats = list(db[stats_collection].aggregate(pipeline))[0]
     return stats

@@ -3,14 +3,13 @@ from pydantic import BaseModel
 from pymongo import MongoClient
 from datetime import datetime
 import time
-from setting import mongo_uri, database_name
+from setting import mongo_uri, database_name, stats_collection
+
 app = FastAPI()
 
-collection_name = "prediction_stats"
 client = MongoClient(mongo_uri)
 db = client[database_name]
-collection = db[collection_name]
-
+collection = db[stats_collection]
 
 
 @app.middleware("http")

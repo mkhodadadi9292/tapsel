@@ -2,7 +2,8 @@
 # mongo_uri = "mongodb://mongodb:27017/"
 mongo_uri = "mongodb://127.0.0.1:27017/"
 database_name = "advertising"
-collection_name = "CTR"
+CTR_collection = "CTR"
+stats_collection = "prediction_stats"
 
 
 # CSV file path
