@@ -11,7 +11,7 @@ cache = TTLCache(maxsize=100, ttl=60)
 
 
 @app.get("/predict", summary="Get all related CRVs.", response_model=List[AdData])
-async def predict(ids: list[int] = Query(..., title="List of primary keys"),
+async def predict(ids: List[int] = Query(..., title="List of primary keys"),
                   db: MongoClient = Depends(get_mongo_db)):
     """
     Get all related CRVs

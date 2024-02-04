@@ -13,5 +13,14 @@ services:
       dockerfile: Dockerfile.seed_data
     depends_on:
       - mongodb
+
+  fastapi-app:
+    build:
+      context: .
+      dockerfile: Dockerfile.fastapi
+    ports:
+      - '8000:8000'
+    depends_on:
+      - mongodb
 volumes:
   dbdata:

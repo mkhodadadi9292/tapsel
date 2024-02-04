@@ -1,6 +1,6 @@
 # MongoDB connection settings
-# mongo_uri = "mongodb://mongodb:27017/"
-mongo_uri = "mongodb://127.0.0.1:27017/"
+mongo_uri = "mongodb://mongodb:27017/"
+# mongo_uri = "mongodb://127.0.0.1:27017/"
 database_name = "advertising"
 CTR_collection = "CTR"
 stats_collection = "prediction_stats"
