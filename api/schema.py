@@ -9,3 +9,4 @@ class AdData(BaseModel):
 class StatModel(BaseModel):
     count: int
     avg_response_time: float
+    p99_response_time: float

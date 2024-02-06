@@ -1,6 +1,6 @@
 from typing import List
 from fastapi import HTTPException, Query, Depends
-from pymongo import MongoClient
+from pymongo import MongoClient, ASCENDING
 from cachetools import TTLCache
 from schema import AdData, StatModel
 from dependencies import get_mongo_db
@@ -8,6 +8,12 @@ from setting import CTR_collection, stats_collection
 from middlewares import app
 
 cache = TTLCache(maxsize=100, ttl=60)
+
+
+@app.on_event("startup")
+async def startup_event():
+    _db = get_mongo_db()
+    _db[stats_collection].create_index([("response_time", ASCENDING)])
 
 
 @app.get("/predict", summary="Get all related CRVs.", response_model=List[AdData])
@@ -36,15 +42,27 @@ async def get_stats(db: MongoClient = Depends(get_mongo_db)):
     Retrieve general statistics from the MongoDB collection.
     :return: general statistics
     """
+    # pipeline = [
+    #     {
+    #         "$group": {
+    #             "_id": None,
+    #             "count": {"$sum": 1},
+    #             "avg_response_time": {"$avg": "$response_time"}
+    #         }
+    #     }
+    # ]
+
     pipeline = [
         {
             "$group": {
                 "_id": None,
                 "count": {"$sum": 1},
-                "avg_response_time": {"$avg": "$response_time"}
+                "avg_response_time": {"$avg": "$response_time"},
+                "p99_response_time": {"$percentile": {"input": "$response_time", "p": [0.99], "method": 'approximate'}}
             }
         }
     ]
 
     stats = list(db[stats_collection].aggregate(pipeline))[0]
+    stats['p99_response_time'] = stats['p99_response_time'][0]
     return stats
