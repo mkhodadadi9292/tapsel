@@ -62,5 +62,7 @@ The script connects to MongoDB using the provided `mongo_uri` and inserts data i
 Running the Services
 
 run `docker-compose up -d`
+you can access all endpoints through following url path:
+`http://127.0.0.1:8000/docs`
 
 
