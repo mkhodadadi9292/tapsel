@@ -50,7 +50,10 @@ Cache Key Generation: The cache key is dynamically generated based on the hash o
 Cache TTL (Time-to-Live): The cache is configured with a TTL of 60 seconds.
 Usage
 When a request is made to the /predict endpoint with the same set of ids within the cache TTL, the cached response is returned. If the ids are not found in the cache, the prediction logic is executed, and the result is stored in the cache for future requests.
-
+### MongoDB index
+To optimize queries based on response time, an ascending index is created on the response_time field. This index enhances the performance of sorting and aggregation operations related to response time.
+### percentiles method
+The calculation of p99_response_time leverages the `$percentile` operator, a powerful feature introduced in MongoDB version 5.0 and later. This operator facilitates the computation of percentiles in a straightforward manner.
 ### MongoDB Connection
 
 The script connects to MongoDB using the provided `mongo_uri` and inserts data into the specified collections (`CTR` and `prediction_stats`).
