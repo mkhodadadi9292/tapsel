@@ -42,15 +42,6 @@ async def get_stats(db: MongoClient = Depends(get_mongo_db)):
     Retrieve general statistics from the MongoDB collection.
     :return: general statistics
     """
-    # pipeline = [
-    #     {
-    #         "$group": {
-    #             "_id": None,
-    #             "count": {"$sum": 1},
-    #             "avg_response_time": {"$avg": "$response_time"}
-    #         }
-    #     }
-    # ]
 
     pipeline = [
         {
